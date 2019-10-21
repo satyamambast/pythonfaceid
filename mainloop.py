@@ -2,6 +2,7 @@ import tkinter
 import cv2
 import PIL.Image, PIL.ImageTk
 import time
+import os
 
 class App:
     def __init__(self, window_title, video_source=2):
@@ -10,6 +11,8 @@ class App:
         self.video_source = video_source
         self.window.geometry("1000x1000")
         self.vid = videoCapture(self.video_source)
+        self.e1 = tkinter.Entry(self.window)
+        self.e1.pack(anchor=tkinter.CENTER, expand=True)
 
         self.canvas = tkinter.Canvas(self.window, width = self.vid.width, height = self.vid.height)
         self.canvas.pack()
@@ -22,9 +25,15 @@ class App:
     def snapshot(self):
         # Get a frame from the video source
         ret, frame = self.vid.get_frame()
- 
+        print("hey")
+        name=self.e1.get()
+        try:
+            os.mkdir(name)
+        except:
+            print("Waht")
+            pass
         if ret:
-            cv2.imwrite("frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+            cv2.imwrite(name+"/"+name+".jpg", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
     def update(self):
         # Get a frame from the video source
         ret, frame = self.vid.get_frame()
@@ -33,8 +42,8 @@ class App:
             self.canvas.create_image(0, 0, image = self.photo, anchor = tkinter.NW)
         self.window.after(self.delay, self.update)
 class videoCapture:
-    def __init__(self, video_source=0):
-         self.vid = cv2.VideoCapture(video_source)
+    def __init__(self, video_source=2):
+         self.vid = cv2.VideoCapture(2)
          if not self.vid.isOpened():
              raise ValueError("Unable to open video source", video_source)
          self.width = self.vid.get(cv2.CAP_PROP_FRAME_WIDTH)
